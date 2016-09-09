@@ -1,0 +1,33 @@
+#!/usr/bin/env Rscript
+
+sys = modules::import('klmr/sys')
+
+sys$run({
+    args = sys$cmd$parse(opt('', 'vst', 'the read count data table'),
+                         opt('', 'design', 'the library design table'),
+                         opt('n', 'number', 'number of top genes to report', 50),
+                         arg('output', 'the output filename'))
+
+    modules::import_package('dplyr', attach = TRUE)
+
+    design = readr::read_tsv(args$design, col_names = c('ID', 'Condition'))
+
+    top_genes = readr::read_tsv(args$vst) %>%
+        tidyr::gather(ID, Value, -Gene) %>%
+        group_by(Gene) %>%
+        summarize(Value = sum(Value)) %>%
+        top_n(args$n, Value) %>%
+        .$Gene
+
+    top_expression = readr::read_tsv(args$vst) %>%
+        filter(Gene %in% top_genes) %>%
+        tidyr::gather(ID, Value, -Gene) %>%
+        inner_join(design, by = 'ID') %>%
+        group_by(Gene, Condition) %>%
+        summarize(Value = mean(Value)) %>%
+        tidyr::spread(Condition, Value)
+
+    readr::write_tsv(top_expression, args$output)
+})
+
+# vim: ft=r

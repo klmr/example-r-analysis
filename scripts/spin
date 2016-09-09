@@ -1,0 +1,18 @@
+#!/usr/bin/env Rscript
+
+sys = modules::import('klmr/sys')
+
+sys$run({
+    args = sys$cmd$parse(arg('input', 'input file (*.r)'),
+                         opt('o', 'out-dir', 'output directory'))
+
+    fig_dir = file.path('figures', basename(args$input))
+
+    # See <https://github.com/yihui/knitr/issues/172>
+    pdf.options(encoding = 'CP1250')
+
+    ezknitr::ezspin(args$input, out_dir = args$out_dir, fig_dir = fig_dir,
+                    wd = getwd(), doc = '^## ?', move_intermediate_file = FALSE)
+})
+
+# vim: ft=r

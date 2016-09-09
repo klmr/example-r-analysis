@@ -1,0 +1,34 @@
+#!/usr/bin/env Rscript
+
+sys = modules::import('klmr/sys')
+
+sys$run({
+    args = sys$cmd$parse(opt('', 'counts', 'the read count data table'),
+                         opt('', 'design', 'the library design table'),
+                         arg('output', 'the output filename'))
+
+    counts = readr::read_tsv(args$counts)
+    design = readr::read_tsv(args$design, col_names = c('ID', 'Condition'))
+
+    # We only want to work on the cancer samples; ignore the rest.
+
+    modules::import_package('dplyr', attach = TRUE)
+
+    design = filter(design, Condition %in% c('Hepa1-6', 'Hepa1c1c7'))
+    counts = counts %>%
+        select(Gene, one_of(design$ID)) %>%
+        as.data.frame() %>%
+        tibble::column_to_rownames('Gene') %>%
+        as.matrix()
+
+    # Perform variance stabilising normalisation for better comparability.
+
+    deseq = modules::import_package('DESeq2')
+
+    vst = deseq$varianceStabilizingTransformation(counts) %>%
+        as.data.frame() %>%
+        tibble::rownames_to_column('Gene')
+    readr::write_tsv(vst, args$output)
+})
+
+# vim: ft=r
