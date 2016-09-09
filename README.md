@@ -9,6 +9,9 @@ intermediate data files (in the `data` path) and the figure files (in the
 `report/figures/*` paths), this represents the publishable output of the
 analysis.
 
+The result can be previewed in [`report/report.html` on the `compiled`
+branch](http://htmlpreview.github.io/?https://github.com/klmr/example-r-analysis/blob/compiled/report/report.html).
+
 To run the whole workflow, simply execute
 
 ```bash
