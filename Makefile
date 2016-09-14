@@ -1,5 +1,4 @@
 .DEFAULT_GOAL := report/report.html
-COOKIES := cookiefile
 
 data:
 	mkdir -p '$@'
