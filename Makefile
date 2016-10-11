@@ -5,10 +5,10 @@ data:
 
 # Data from <https://dx.doi.org/10.6084/m9.figshare.2056227>
 
-data/rnaseq-counts.tsv: data
+data/rnaseq-counts.tsv: | data
 	curl -L --output '$@' https://ndownloader.figshare.com/files/3632364
 
-data/rnaseq-design.tsv: data
+data/rnaseq-design.tsv: | data
 	curl -L --output '$@' https://ndownloader.figshare.com/files/3632328
 
 data/rnaseq-vst.tsv: data/rnaseq-counts.tsv data/rnaseq-design.tsv
