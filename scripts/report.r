@@ -8,6 +8,7 @@
 #+ packages, echo=FALSE, message=FALSE
 modules::import_package('dplyr', attach = TRUE)
 modules::import_package('ggplot2', attach = TRUE)
+options(readr.num_columns = 0)
 
 #+ load-data
 expression_data = readr::read_tsv('data/rnaseq-vst.tsv')
