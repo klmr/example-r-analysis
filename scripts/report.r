@@ -1,8 +1,9 @@
 ## # Gene expression analysis
 ##
 ## Perform a (fairly meaningless) gene expression analysis on some samples. The
-## data comes from [Rudolph *& al.* (2016)][@Rudolph2016]. The full data can be
-## found [on figshare](https://dx.doi.org/10.6084/m9.figshare.2056227.v1).
+## data comes from [Rudolph, Schmitt *& al.* (2016)][@Rudolph2016]. The full
+## data can be found [on
+## figshare](https://dx.doi.org/10.6084/m9.figshare.2056227.v1).
 
 #+ packages, echo=FALSE, message=FALSE
 modules::import_package('dplyr', attach = TRUE)
@@ -51,4 +52,4 @@ ggplot(pcx) +
 #+ top-genes, echo=FALSE, results='asis'
 knitr::kable(top_genes)
 
-## [@Rudolph2016]: http://dx.doi.org/10.1371/journal.pgen.1006024 "Rudolph & al., Codon-Driven Translational Efficiency Is Stable across Diverse Mammalian Cell States. PLoS Genet; 2016"
+## [@Rudolph2016]: http://dx.doi.org/10.1371/journal.pgen.1006024 "Rudolph, Schmitt & al., Codon-Driven Translational Efficiency Is Stable across Diverse Mammalian Cell States. PLoS Genet; 2016"
