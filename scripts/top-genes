@@ -1,33 +1,41 @@
 #!/usr/bin/env Rscript
 
-sys = modules::import('klmr/sys')
+box::use(
+    klmr/sys,
+)
 
 sys$run({
-    args = sys$cmd$parse(opt('', 'vst', 'the read count data table'),
-                         opt('', 'design', 'the library design table'),
-                         opt('n', 'number', 'number of top genes to report', 50),
-                         arg('output', 'the output filename'))
+    args = sys$cmd$parse(
+        opt('', 'vst', 'the read count data table'),
+        opt('', 'design', 'the library design table'),
+        opt('n', 'number', 'number of top genes to report', 50),
+        arg('output', 'the output filename')
+    )
 
-    modules::import_package('dplyr', attach = TRUE)
+    box::use(
+        dplyr[...],
+        readr,
+        tidyr
+    )
 
-    design = readr::read_tsv(args$design, col_names = c('ID', 'Condition'))
+    design = readr$read_tsv(args$design, col_names = c('ID', 'Condition'))
 
-    top_genes = readr::read_tsv(args$vst) %>%
-        tidyr::gather(ID, Value, -Gene) %>%
+    top_genes = readr$read_tsv(args$vst) %>%
+        tidyr$gather(ID, Value, -Gene) %>%
         group_by(Gene) %>%
-        summarize(Value = sum(Value)) %>%
-        top_n(args$n, Value) %>%
-        .$Gene
+        summarize(Value = sum(Value), .groups = 'drop') %>%
+        top_n(args$number, Value) %>%
+        pull(Gene)
 
-    top_expression = readr::read_tsv(args$vst) %>%
+    top_expression = readr$read_tsv(args$vst) %>%
         filter(Gene %in% top_genes) %>%
-        tidyr::gather(ID, Value, -Gene) %>%
+        tidyr$pivot_longer(-Gene, names_to = 'ID', values_to = 'Value') %>%
         inner_join(design, by = 'ID') %>%
         group_by(Gene, Condition) %>%
-        summarize(Value = mean(Value)) %>%
-        tidyr::spread(Condition, Value)
+        summarize(Value = mean(Value), .groups = 'drop') %>%
+        tidyr$pivot_wider(names_from = Condition, values_from = Value)
 
-    readr::write_tsv(top_expression, args$output)
+    readr$write_tsv(top_expression, args$output)
 })
 
 # vim: ft=r
